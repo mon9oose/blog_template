@@ -1,0 +1,33 @@
+{{ define "main" }}
+  {{/* We are on the homepage, but we want to display the blog. */}}
+  {{/* So, we get the blog page's context for the header and pagination. */}}
+  {{ $blogPage := site.Home }}
+
+  {{ partial "page-header" $blogPage }}
+
+  <section class="section">
+    <div class="container">
+      <div class="row gx-5">
+        <!-- blog posts -->
+        <div class="lg:col-8">
+          <div class="row">
+            {{/* Paginate the pages from the "blog" section. */}}
+            {{ $paginator := .Paginate ($blogPage.RegularPages.ByDate.Reverse) }}
+            {{ range $paginator.Pages }}
+              <div class="md:col-6 mb-14">
+                {{ partial "components/blog-card" . }}
+              </div>
+            {{ end }}
+          </div>
+          {{ partial "components/pagination.html" (dict "Paginator" $paginator "Page" $blogPage) }}
+        </div>
+        <!-- sidebar -->
+        <div class="lg:col-4">
+          <!-- widget -->
+          {{ $widget:= site.Params.widgets.sidebar }}
+          {{ partialCached "widgets/widget-wrapper" ( dict "Widgets" $widget "Scope" $blogPage ) }}
+        </div>
+      </div>
+    </div>
+  </section>
+{{ end }}
